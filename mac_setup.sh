@@ -16,6 +16,7 @@ PACKAGES=(
   ncdu
   direnv
   bat
+  dvc
 )
 
 brew install ${PACKAGES[@]}
