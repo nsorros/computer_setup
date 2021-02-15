@@ -17,6 +17,7 @@ PACKAGES=(
   direnv
   bat
   dvc
+  jq
 )
 
 brew install ${PACKAGES[@]}
