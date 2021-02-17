@@ -18,6 +18,7 @@ PACKAGES=(
   bat
   dvc
   jq
+  gh
 )
 
 brew install ${PACKAGES[@]}
@@ -34,6 +35,9 @@ CASKS=(
 
 brew install --cask ${CASKS[@]}
 
+brew tap wellcometrust/homebrew-wellcome-tap git@github.com:wellcometrust/homebrew-wellcome-tap.git
+brew install remote
+
 # AWS CLI
 curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 sudo installer -pkg AWSCLIV2.pkg -target /
@@ -41,6 +45,7 @@ sudo installer -pkg AWSCLIV2.pkg -target /
 # Python config
 pyenv install 3.8.7
 pyenv install 3.7.9
+pyenv install 3.9.1
 pyenv global 3.7.9
 python -m pip install --user virtualenv
 
@@ -61,8 +66,9 @@ echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
 chsh -s /usr/local/bin/fish
 mkdir -p ~/.config/fish
 touch ~/.config/fish/config.fish
-set -g -x PATH /usr/local/bin $PATH
+set -g -x PATH /usr/local/bin $PATH # fish
 fish_update_completions
+set -U fish_user_paths $fish_user_paths /Users/nsorros/.local/bin # fish
 
 git clone https://github.com/powerline/fonts.git
 cd fonts
@@ -70,3 +76,27 @@ cd fonts
 cd ..
 rm -rf fonts
 
+curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/bin/install | fish
+curl http://ethanschoonover.com/solarized/files/solarized.zip
+
+omf theme install agnoster
+
+ssh-keygen -t rsa -b 4096 -C "nsorros@gmail.com"
+cat << EOF
+  Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_rsa
+EOF
+eval (ssh-agent -c) # fish way
+ssh-add -K ~/.ssh/id_rsa
+
+echo "SSH keys created."
+
+echo "You need to upload SSH keys to Github for the following commands to work"
+cd
+mkdir code
+cd code
+gh auth login
+gh repo clone wellcometrust/WellcomeML
+gh repo clone wellcometrust/grants_tagger
