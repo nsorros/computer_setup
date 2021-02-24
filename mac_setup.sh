@@ -31,6 +31,7 @@ CASKS=(
   zoom
   docker
   iterm2
+  keybase
 )
 
 brew install --cask ${CASKS[@]}
