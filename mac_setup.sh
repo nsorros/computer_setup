@@ -32,6 +32,8 @@ CASKS=(
   docker
   iterm2
   keybase
+  whatsapp
+  spotify
 )
 
 brew install --cask ${CASKS[@]}
