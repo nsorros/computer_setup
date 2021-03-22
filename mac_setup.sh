@@ -34,6 +34,7 @@ CASKS=(
   keybase
   whatsapp
   spotify
+  signal
 )
 
 brew install --cask ${CASKS[@]}
