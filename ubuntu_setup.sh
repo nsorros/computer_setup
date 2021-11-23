@@ -1,6 +1,7 @@
 apt update
 
 # Venv
+apt install python3-venv
 apt install python3-pip
 apt install virtualenv
 
