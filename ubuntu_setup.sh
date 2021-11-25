@@ -11,6 +11,7 @@ apt install jq
 apt install aws_cli
 apt install direnv
 apt install powerflinw
+apt install unzip
 
 echo "# Direnv" >> ~/.bashrc
 echo 'eval "$(direnv hook bash)"' >> ~/.bashrc
