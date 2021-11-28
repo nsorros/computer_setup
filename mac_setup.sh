@@ -77,7 +77,6 @@ pyenv install 3.8.7
 pyenv install 3.7.9
 pyenv install 3.9.1
 pyenv global 3.7.9
-python -m pip install --user virtualenv
 
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bash_profile
 echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bash_profile
@@ -87,10 +86,19 @@ echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
 echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.zshrc
 
-set -Ux PYENV_ROOT $HOME/.pyenv
-set -Ux fish_user_paths $PYENV_ROOT/bin $fish_user_paths
-echo -e '\n\n# pyenv init\nif command -v pyenv 1>/dev/null 2>&1\n  pyenv init - | source\nend' >> ~/.config/fish/config.fish
+mkdir -p ~/.config/fish
+touch ~/.config/fish/config.fish
+echo "status is-login; and pyenv init --path | source" >> ~/.config/fish.config.fish
+echo "status is-interactive; and pyenv init - | source" >> ~/.config/fish.config.fish
 
+# Virtualenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+python -m pip install --user virtualenv
+
+# Powerline fonts
 git clone https://github.com/powerline/fonts.git
 cd fonts
 ./install.sh
@@ -100,11 +108,11 @@ rm -rf fonts
 # Fish config
 echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
 chsh -s /usr/local/bin/fish
-mkdir -p ~/.config/fish
-touch ~/.config/fish/config.fish
 set -g -x PATH /usr/local/bin $PATH # fish
 fish_update_completions
 set -U fish_user_paths $fish_user_paths /Users/nsorros/.local/bin # fish
+set -Ux PYENV_ROOT $HOME/.pyenv
+set -Ux fish_user_paths $PYENV_ROOT/bin $fish_user_paths
 
 curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/bin/install | fish
 curl http://ethanschoonover.com/solarized/files/solarized.zip
