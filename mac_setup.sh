@@ -50,6 +50,7 @@ brew install remote
 eval $(op signin https://my.1password.com nsorros@gmail.com)
 
 # Get and config ssh keys
+mkdir ~/.ssh
 op get document ssh_private_key > ~/.ssh/id_rsa
 op get document ssh_public_key > ~/.ssh/id_rsa.pub
 chmod 600 ~/.ssh/id_rsa
