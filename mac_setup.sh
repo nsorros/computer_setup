@@ -63,6 +63,10 @@ EOF
 eval $(ssh-agent -c)
 ssh-add -K ~/.ssh/id_rsa
 
+# Git config
+git config --global user.name "Nick Sorros"
+git config --global user.email "nsorros@gmail.com"
+
 # AWS CLI
 # curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 # sudo installer -pkg AWSCLIV2.pkg -target /
