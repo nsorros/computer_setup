@@ -19,6 +19,8 @@ PACKAGES=(
   dvc
   jq
   gh
+  awscli
+  1password-cli
 )
 
 brew install ${PACKAGES[@]}
@@ -35,16 +37,35 @@ CASKS=(
   whatsapp
   spotify
   signal
+  1password
 )
 
 brew install --cask ${CASKS[@]}
 
+# This fails due to ssh keys for some reason
 brew tap wellcometrust/homebrew-wellcome-tap git@github.com:wellcometrust/homebrew-wellcome-tap.git
 brew install remote
 
+# One password signin
+eval $(op signin https://my.1password.com nsorros@gmail.com)
+
+# Get and config ssh keys
+op get document ssh_private_key > ~/.ssh/id_rsa
+op get document ssh_public_key > ~/.ssh/id_rsa.pub
+chmod 600 ~/.ssh/id_rsa
+chmod 644 ~/.ssh/id_rsa.pub
+cat << EOF > ~/.ssh/config
+  Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_rsa
+EOF
+eval $(ssh-agent -c)
+ssh-add -K ~/.ssh/id_rsa
+
 # AWS CLI
-curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-sudo installer -pkg AWSCLIV2.pkg -target /
+# curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+# sudo installer -pkg AWSCLIV2.pkg -target /
 
 # Python config
 pyenv install 3.8.7
@@ -65,6 +86,12 @@ set -Ux PYENV_ROOT $HOME/.pyenv
 set -Ux fish_user_paths $PYENV_ROOT/bin $fish_user_paths
 echo -e '\n\n# pyenv init\nif command -v pyenv 1>/dev/null 2>&1\n  pyenv init - | source\nend' >> ~/.config/fish/config.fish
 
+git clone https://github.com/powerline/fonts.git
+cd fonts
+./install.sh
+cd ..
+rm -rf fonts
+
 # Fish config
 echo "/usr/local/bin/fish" | sudo tee -a /etc/shells
 chsh -s /usr/local/bin/fish
@@ -74,33 +101,8 @@ set -g -x PATH /usr/local/bin $PATH # fish
 fish_update_completions
 set -U fish_user_paths $fish_user_paths /Users/nsorros/.local/bin # fish
 
-git clone https://github.com/powerline/fonts.git
-cd fonts
-./install.sh
-cd ..
-rm -rf fonts
-
 curl -L https://github.com/oh-my-fish/oh-my-fish/raw/master/bin/install | fish
 curl http://ethanschoonover.com/solarized/files/solarized.zip
 
 omf theme install agnoster
 
-ssh-keygen -t rsa -b 4096 -C "nsorros@gmail.com"
-cat << EOF
-  Host *
-    AddKeysToAgent yes
-    UseKeychain yes
-    IdentityFile ~/.ssh/id_rsa
-EOF
-eval (ssh-agent -c) # fish way
-ssh-add -K ~/.ssh/id_rsa
-
-echo "SSH keys created."
-
-echo "You need to upload SSH keys to Github for the following commands to work"
-cd
-mkdir code
-cd code
-gh auth login
-gh repo clone wellcometrust/WellcomeML
-gh repo clone wellcometrust/grants_tagger
